@@ -6,3 +6,4 @@ Features:
     -Open programmgroups for tasks
         -bsp: Open spotify, chrome and vs for coding
     -track time in these programmgoups(automatically)
+    -store times and presets in cloud
