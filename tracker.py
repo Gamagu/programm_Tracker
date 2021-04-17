@@ -15,6 +15,13 @@ class Tracker:
         for task in tasks:
             self.processesNow.append(datatypes.prozess(parent = task))
 
+    def updateProcessesToTrack(self):
+        for i in range(len(self.processesToTrack.prozessNames)):
+            if self.processesToTrack.prozessNames[i] in self.processesNow.prozessNames:
+                self.processesToTrack[i].running = True
+            else:
+                self.processesToTrack[i].running = False
+
     def test(self):
         for i in self.processes.prozessNames:
             print(i)
@@ -32,8 +39,9 @@ class Tracker:
         for i in jsonFile["processes"]:
             self.processesToTrack.append(datatypes.prozess( name=i["name"],
                                                             totalTime= i["totalTime"]))
+
     def writeProcessToTrack(self):
-        #Open existing file
+        #get data from the existing file
         jsonFile : dict
         with open("processes.json", "r") as file:
             jsonFile = json.load(file)
