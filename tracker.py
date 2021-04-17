@@ -13,7 +13,7 @@ class Tracker:
         tasks = self.conn.Win32_Process()
         self.processes = datatypes.processList()
         for task in tasks:
-            self.processes.append(datatypes.prozess(task))
+            self.processes.append(datatypes.prozess(parent  = task))
 
     def test(self):
         for i in self.processes.prozessNames:
@@ -24,7 +24,16 @@ class Tracker:
             return True
         return False
 
-    def initProcessgroups(self):
+    def readProcessToTrack(self):
+        jsonFile = dict
+        with open("processes.json", "r") as file:
+            jsonFile = json.load(file)
+        
+        for i in jsonFile["prozesses"]:
+            self.processesToTrack.append(datatypes.prozess( name=i["name"],
+                                                            totalTime= i["totalTime"]))
+    
+    def writeProcessToTrack(self):
         pass
     def checkProcessgroup(self):
         pass     
@@ -32,10 +41,10 @@ class Tracker:
 if __name__ == "__main__":
     test = Tracker()
     t1 = datetime.datetime.now()
-    test.getRunningProcesses()
+    test.readProcessToTrack()
     
-    test.test()
-    print(test.checkProcess("firefox.exe"))
-    print(datetime.datetime.now()-t1)
+    #test.test()
+    #print(test.checkProcess("firefox.exe"))
+    #print(datetime.datetime.now()-t1)
     
 

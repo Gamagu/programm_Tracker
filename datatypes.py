@@ -7,12 +7,21 @@ class prozess:
     """Process information"""
     id : int
     name : str
+    running : bool
     currentRuntime : datetime
     totalTime : datetime
 
-    def __init__(self, parent : wmi._wmi_object ) -> None:
-        self.id = parent.ProcessId
-        self.name = parent.name
+    def __init__(self, parent : wmi._wmi_object = None, running = False, id = -1, name : str = None, totalTime : int = 0  ) -> None:
+        if parent is not None:
+            self.id = parent.ProcessId
+            self.name = parent.name
+            self.running = running
+            self.totalTime = datetime.timedelta(seconds=0)
+        else:
+            self.id = id
+            self.name = name
+            self.running = running
+            self.totalTime = datetime.timedelta(seconds=totalTime)
 
 class processList(UserList):
     """List only for processes"""
