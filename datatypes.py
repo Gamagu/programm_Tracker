@@ -22,3 +22,4 @@ class processList(UserList):
     def append(self, item: prozess) -> None:
         self.prozessNames.append(item.name)
         return super().append(item)
+        
