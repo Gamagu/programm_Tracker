@@ -8,7 +8,7 @@ class prozess:
     id : int
     name : str
     running : bool
-    currentRuntime : datetime
+    currentRuntime : datetime #Runtime since last save
     totalTime : datetime
 
     def __init__(self, parent : wmi._wmi_object = None, running = False, id = -1, name : str = None, totalTime : int = 0  ) -> None:
@@ -22,7 +22,7 @@ class prozess:
             self.name = name
             self.running = running
             self.totalTime = datetime.timedelta(seconds=totalTime)
-
+        self.currentRuntime = datetime.timedelta(seconds=0)
 class processList(UserList):
     """List only for processes"""
     def __init__(self) -> None:
