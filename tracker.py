@@ -7,22 +7,27 @@ class Tracker:
         self.processGroups = [] #groups to check
         self.processesToTrack = datatypes.processList() #processes to check
         self.conn = wmi.WMI() #wrapper to win api?
-        self.delay = 60 #Delay in sec between checks -> precision
+        self.delay = 5 #Delay in sec between checks -> precision
         self.t1 = datetime.datetime.now()
 
     def getRunningProcesses(self):
+        t1 = datetime.datetime.now()
         tasks = self.conn.Win32_Process()
-        self.t1 = datetime.datetime.now()
+        
         self.processesNow = datatypes.processList() #Empty the list
         for task in tasks:
             self.processesNow.append(datatypes.prozess(parent = task))
-
+        print("readout time: ",(datetime.datetime.now() - t1))
     def updateProcessesToTrack(self):
+        self.getRunningProcesses()
         deltaT = datetime.datetime.now()-self.t1 #Timedifference between last Processreadout and now
+        self.t1 = datetime.datetime.now()
+        print("timedelta: ", deltaT)
         for i in range(len(self.processesToTrack.prozessNames)):
             if self.processesToTrack.prozessNames[i] in self.processesNow.prozessNames:
                 self.processesToTrack[i].running = True #Update state
                 self.processesToTrack[i].currentRuntime += deltaT #Update runtime
+                print(f'Programm: {self.processesToTrack[i].name} Runtime: {self.processesToTrack[i].currentRuntime}')
             else:
                 self.processesToTrack[i].running = False
 
@@ -49,7 +54,7 @@ class Tracker:
         for i in self.processesToTrack:
             i.totalTime += i.currentRuntime
             i.currentRuntime = datetime.timedelta(seconds=0)            
-
+            print("yikes: ", i.totalTime)
         #get data from the existing file
         jsonFile : dict
         with open("processes.json", "r") as file:
@@ -58,10 +63,12 @@ class Tracker:
         #Manipulate Json with new data
         newData = []
         for i in range(len(self.processesToTrack)):
+            
             newData.append({
                 "name" : self.processesToTrack.prozessNames[i],
-                "totalTime" : self.processesToTrack[i].totalTime.total_seconds()
+                "totalTime" : self.processesToTrack[i].totalTime.seconds
             })
+        
         jsonFile["processes"] = newData 
 
         #save
@@ -75,9 +82,11 @@ if __name__ == "__main__":
     test = Tracker()
     t1 = datetime.datetime.now()
     test.readProcessToTrack()
-    test.getRunningProcesses()
-    time.sleep(2)
-    test.updateProcessesToTrack()
+    for i in range(10):
+        time.sleep(test.delay)
+        #test.getRunningProcesses()
+        test.updateProcessesToTrack()
+            
     test.writeProcessToTrack()
 
     #print(datetime.datetime.now()-t1)

@@ -1,12 +1,12 @@
 {
-    "prozesses" : [
+    "processes": [
         {
-            "name" : "spotify",
-            "totalTime" : 0
+            "name": "Spotify.exe",
+            "totalTime": 188
         },
         {
-            "name": "chrome",
-            "totalTime" : 0
+            "name": "firefox.exe",
+            "totalTime": 188
         }
     ]
 }

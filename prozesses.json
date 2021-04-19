@@ -1,0 +1,12 @@
+{
+    "processes": [
+        {
+            "name": "spotify",
+            "totalTime": 0.0
+        },
+        {
+            "name": "chrome",
+            "totalTime": 0.0
+        }
+    ]
+}
