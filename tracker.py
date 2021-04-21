@@ -1,5 +1,6 @@
 import datetime, wmi, datatypes, json, time
 from collections import UserList
+
 class Tracker:
     def __init__(self):
         self.processesNow = datatypes.processList() #for new processes
@@ -26,7 +27,8 @@ class Tracker:
         for i in range(len(self.processesToTrack.prozessNames)):
             if self.processesToTrack.prozessNames[i] in self.processesNow.prozessNames:
                 self.processesToTrack[i].running = True #Update state
-                self.processesToTrack[i].currentRuntime += deltaT #Update runtime
+                #self.processesToTrack[i].currentRuntime += deltaT #Update runtime
+                self.processesToTrack[i].addTimedelta(deltaT)
                 print(f'Programm: {self.processesToTrack[i].name} Runtime: {self.processesToTrack[i].currentRuntime}')
             else:
                 self.processesToTrack[i].running = False

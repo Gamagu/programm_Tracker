@@ -8,21 +8,32 @@ class prozess:
     id : int
     name : str
     running : bool
-    currentRuntime : datetime #Runtime since last save
-    totalTime : datetime
+    currentRuntime : datetime.timedelta #Runtime since last save
+    pastTime : datetime.timedelta
+    totalTime : datetime.timedelta
 
     def __init__(self, parent : wmi._wmi_object = None, running = False, id = -1, name : str = None, totalTime : int = 0  ) -> None:
         if parent is not None:
+            #if a wmi objekt is given
             self.id = parent.ProcessId
             self.name = parent.name
             self.running = running
-            self.totalTime = datetime.timedelta(seconds=0)
+            
+            self.pastTime = datetime.timedelta(seconds=totalTime)
         else:
+            #if its self created
             self.id = id
             self.name = name
             self.running = running
-            self.totalTime = datetime.timedelta(seconds=totalTime)
+            self.pastTime = datetime.timedelta(seconds=totalTime)
+
         self.currentRuntime = datetime.timedelta(seconds=0)
+        self.totalTime = self.currentRuntime + self.pastTime
+
+    def addTimedelta(self, diff : datetime.timedelta):
+        self.currentRuntime += diff
+        self.totalTime = self.currentRuntime + self.pastTime
+
 class processList(UserList):
     """List only for processes"""
     def __init__(self) -> None:
