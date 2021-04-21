@@ -11,9 +11,9 @@ class Tracker:
         self.t1 = datetime.datetime.now()
 
     def getRunningProcesses(self):
-        t1 = datetime.datetime.now()
-        tasks = self.conn.Win32_Process()
         
+        tasks = self.conn.Win32_Process()
+        t1 = datetime.datetime.now()
         self.processesNow = datatypes.processList() #Empty the list
         for task in tasks:
             self.processesNow.append(datatypes.prozess(parent = task))
