@@ -9,7 +9,7 @@ if __name__ == '__main__':
     keepRunning=True
     tracker.readProcessToTrack()
     tracker.readProcessGroups()
-    uiThread = UiThread(args=[tracker.processesToTrack])
+    uiThread = UiThread(args=[tracker.processesToTrack, tracker.processGroups])
     uiThread.start()    
     tracker.updateProcessesToTrack()
     uiThread.ui.reload()
