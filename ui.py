@@ -4,7 +4,7 @@ import datatypes , threading as th
 class Ui(tk.Tk):
     """ Main Ui for the Prozess tracker"""
 
-    def __init__(self, processlist : datatypes.processList = None,debug = False) -> None:
+    def __init__(self, processlist : datatypes.processList = None, groupList : datatypes.prozessGroupList = None, debug = False) -> None:
         
         super().__init__("Process Tracker")
         self.title("Prozess Tracker")
@@ -12,14 +12,28 @@ class Ui(tk.Tk):
         self.debug = debug
         if processlist == None:
             debug = True
+        #Init processes
         self.processlist = processlist
         self.processlistFrames = []
-        self.mainFrame = tk.Frame(self, width= 100, height= 100)
-        self.prozessTop = ProzessFrameTop(self.mainFrame)
+        self.processFrame = tk.Frame(self, width= 100, height= 100)
+        self.prozessTop = ProzessFrameHeader(self.processFrame)
         self.prozessTop.pack(side=tk.TOP,fill=tk.BOTH)
-        self.mainFrame.pack(fill=tk.BOTH) 
-        #Create new event
+        self.processFrame.grid(row=0, column=0, sticky="nsew") 
         
+        #Init Groupe
+        self.useGroups = False
+        if groupList != None:
+            self.useGroups = True
+            self.groupList = groupList
+            self.gouplistFrames = []
+            self.groupFrame = tk.Frame(self, width=100, height=100)
+            self.groupHeader = ProzessFrameHeader(self.groupFrame)
+            self.groupHeader.pack(side=tk.TOP)
+            self.groupFrame.grid(row=0, column=0, sticky="nsew")
+        
+        self.processFrame.tkraise()
+
+        #Create new event
         self.bind("<<OnUpdate>>", self.reload)
         self.initMenue()
 
@@ -30,19 +44,29 @@ class Ui(tk.Tk):
         self.initProcesses()
 
     def test(self):
-        self.prozessTest = datatypes.prozess(parent=None,running=False,id=10,name="Spotify.exe")
-        self.yikes = ProzessFrame(self.mainFrame,self.prozessTest)
-        self.yikes.pack(fill=tk.BOTH)
+        pass
     def initMenue(self):
         self.menu = tk.Menu(self)
         self.config(menu=self.menu)
-
         self.menu.add_command(label='Reload', command=self.reload)
+
+        #Add switch groups<->processes
+        if self.useGroups:
+            self.switch = tk.Menu(self.menu) #main switch menu
+            # Processes tap
+            self.switch.add_command(label="Processes", command=self.processFrame.tkraise)
+            # Groups tap
+            self.switch.add_command(label="Groups", command=self.groupFrame.tkraise)
+            
+            # TODO Make switcher for frames via dict -> shorter
+
+            #app menu
+            self.menu.add_cascade(label="Switch", menu=self.switch)
 
     def initProcesses(self):
         for i in range(len(self.processlist)):
             print("Prozess: ", self.processlist[i].name, self.processlist[i].totalTime, self.processlist[i].running)
-            h = ProzessFrame(self.mainFrame, self.processlist[i])
+            h = ProzessFrame(self.processFrame, self.processlist[i])
             self.processlistFrames.append(h)
             self.processlistFrames[i].pack(side=tk.TOP,fill=tk.BOTH)
     
@@ -99,7 +123,7 @@ class ProzessFrame(tk.Frame):
         else:
             self.status.config(bg='#990000', text="Inactive")
     
-class ProzessFrameTop(tk.Frame):
+class ProzessFrameHeader(tk.Frame):
     def __init__(self,parent) -> None:
         tk.Frame.__init__(self,parent)
         self.name = tk.Label(self,text="Name", width=15, anchor=tk.W)
