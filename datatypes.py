@@ -42,4 +42,19 @@ class processList(UserList):
     def append(self, item: prozess) -> None:
         self.prozessNames.append(item.name)
         return super().append(item)
+
+    def checkRunning(self) -> bool:
+        """Returns True if every process in this list is runnuing"""
+        for i in self:
+            if i.running == False:
+                return False
+        return True
+
+        
+class prozessGroupList(processList):
+    """List for Processes in for of a group."""
+
+    def __init__(self, name) -> None:
+        super().__init__()
+        self.name = name
         
