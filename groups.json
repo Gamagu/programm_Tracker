@@ -1,0 +1,15 @@
+{
+    "groups":[
+        {
+            "name": "Test",
+            "programms" : [
+                {
+                    "name" : "Spotify.exe"
+                },
+                {
+                    "name" : "Siscord.exe"
+                }
+            ]
+        }
+    ]
+}

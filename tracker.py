@@ -1,4 +1,5 @@
 import datetime, wmi, datatypes, json, time
+from os import name
 from collections import UserList
 
 class Tracker:
@@ -47,9 +48,20 @@ class Tracker:
         with open("processes.json", "r") as file:
             jsonFile = json.load(file)
         
-        for i in jsonFile["processes"]:
+        for i in jsonFile["processes"]: #Für jeden prozess
             self.processesToTrack.append(datatypes.prozess( name=i["name"],
-                                                            totalTime= i["totalTime"]))
+                                                            totalTime= i["totalTime"]))    
+                                    
+    def readProcessGroups(self):
+        jsonFile : dict
+        with open("groups.json", "r") as file:
+            jsonFile = json.load(file)
+        
+        for group in range(len(jsonFile["groups"])): #Für jede gruppe   
+            self.processGroups.append(datatypes.prozessGroupList(jsonFile["groups"][group]["name"])) # Create a grouplist and save it
+            for prozess in jsonFile["groups"][group]["programms"]: #For every programm, only programms in prozesses to track are able for tracking
+                if prozess["name"] in self.processesToTrack.prozessNames: #if its already tracking
+                    self.processGroups[group].append(self.processesToTrack[self.processesToTrack.prozessNames.index(prozess["name"])])
 
     def writeProcessToTrack(self):
         #Apply the prozess.currentRuntime to prozess.totalRuntime and reset currentRuntime
