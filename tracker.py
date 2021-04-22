@@ -88,9 +88,7 @@ class Tracker:
         #save
         with open("processes.json", "w") as file:
             json.dump(jsonFile, file, indent=4 ,sort_keys = True)
-
-    def checkProcessgroup(self):
-        pass     
+   
 
 if __name__ == "__main__":
     test = Tracker()
