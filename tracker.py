@@ -19,9 +19,6 @@ class Tracker:
             self.processesNow.append(datatypes.prozess(parent = task))
 
     def updateProcessesToTrack(self):
-        # TODO Change time messurement for both groups and processes
-        self.deltaT = datetime.datetime.now()-self.t1 #Timedifference between last Processreadout and now
-        self.t1 = datetime.datetime.now()
         print("timedelta: ", self.deltaT)
         for i in range(len(self.processesToTrack.prozessNames)):
             if self.processesToTrack.prozessNames[i] in self.processesNow.prozessNames:
@@ -75,12 +72,27 @@ class Tracker:
                     self.processGroups[group].append(self.processesToTrack[self.processesToTrack.prozessNames.index(prozess["name"])])
 
     def writeProcessGroups(self):
-        pass
+        jsonFile : dict = {"groups":[]}
+        # apply the processGroup.currentRuntime to processGroup.totalRuntime and reset currentRuntime
+        for i in self.processGroups:
+            i.applyCurrentRuntime()  
+            programms = []
+            for pro in i:
+                programms.append({"name":pro.name})
+            print("name:{i.name} totalTime:{i.totalTime}")
+            jsonFile["groups"].append({"name": i.name,
+                                        "totalTime": i.totalTime.seconds,
+                                        "programms":programms
+                                        })
+        
+        #save
+        with open("groups.json", "w") as file:
+            json.dump(jsonFile, file, indent=4 ,sort_keys = True)
+        
     def writeProcessToTrack(self):
         #Apply the prozess.currentRuntime to prozess.totalRuntime and reset currentRuntime
         for i in self.processesToTrack:
-            i.totalTime += i.currentRuntime
-            i.currentRuntime = datetime.timedelta(seconds=0)            
+            i.applyCurrentRuntime()            
 
         newData ={
                     "processes": []         
@@ -107,7 +119,6 @@ if __name__ == "__main__":
         test.updateProcessesToTrack()
             
     test.writeProcessToTrack()
-
     #print(datetime.datetime.now()-t1)
     
 

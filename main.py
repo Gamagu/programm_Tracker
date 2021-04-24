@@ -26,5 +26,6 @@ if __name__ == '__main__':
         tracker.writeProcessToTrack()
             
     tracker.writeProcessToTrack()
+    tracker.writeProcessGroups()
     uiThread.join()
 
