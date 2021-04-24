@@ -32,6 +32,15 @@ class prozess:
     def addTimedelta(self, diff : datetime.timedelta):
         self.currentRuntime += diff
         self.totalTime = self.currentRuntime + self.pastTime
+    
+    def applyCurrentRuntime(self):
+        # apply the processGroup.currentRuntime to processGroup.totalRuntime
+        # and reset currentRuntime
+        print(self.name, "------")
+        print("current: ", self.currentRuntime)
+        print("total: ", self.totalTime)
+        self.totalTime += self.currentRuntime
+        self.currentRuntime = datetime.timedelta(seconds=0) 
 
 class processList(UserList):
     """List only for processes"""
