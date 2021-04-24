@@ -4,7 +4,7 @@ import datatypes , threading as th
 class Ui(tk.Tk):
     """ Main Ui for the Prozess tracker"""
 
-    def __init__(self, processlist : datatypes.processList = None, groupList : datatypes.prozessGroupList = None, debug = False) -> None:
+    def __init__(self, processlist : datatypes.processList = None, groupList : list = None, debug = False) -> None:
         
         super().__init__("Process Tracker")
         self.title("Prozess Tracker")
@@ -19,7 +19,7 @@ class Ui(tk.Tk):
         self.prozessTop = ProzessFrameHeader(self.processFrame)
         self.prozessTop.pack(side=tk.TOP,fill=tk.BOTH)
         self.processFrame.grid(row=0, column=0, sticky="nsew") 
-        
+        self.initProcesses()
         #Init Groupe
         self.useGroups = False
         if groupList != None:
@@ -30,6 +30,7 @@ class Ui(tk.Tk):
             self.groupHeader = ProzessFrameHeader(self.groupFrame)
             self.groupHeader.pack(side=tk.TOP)
             self.groupFrame.grid(row=0, column=0, sticky="nsew")
+            self.initGroups()
         
         self.processFrame.tkraise()
 
@@ -41,7 +42,12 @@ class Ui(tk.Tk):
             self.test()
             return
 
-        self.initProcesses()
+    def initGroups(self):
+        for i in range(len(self.groupList)):
+            print("Prozess: ", self.groupList[i].name)
+            h = ProzessGroupFrame(self.groupFrame,self.groupList[i])
+            self.gouplistFrames.append(h)
+            self.gouplistFrames[i].pack(side=tk.TOP,fill=tk.BOTH)
 
     def test(self):
         pass
@@ -52,7 +58,7 @@ class Ui(tk.Tk):
 
         #Add switch groups<->processes
         if self.useGroups:
-            self.switch = tk.Menu(self.menu) #main switch menu
+            self.switch = tk.Menu(self.menu,) #main switch menu
             # Processes tap
             self.switch.add_command(label="Processes", command=self.processFrame.tkraise)
             # Groups tap
@@ -75,10 +81,19 @@ class Ui(tk.Tk):
         for i in self.processlistFrames:
             i.update()
         
+        for i in self.gouplistFrames:
+            i.update()
         
     def run(processlist):
         Ui(processlist).mainloop()
     
+    @classmethod
+    def getFormatedString(sec : int):
+        """
+        Returns a formated string for the ui
+        """
+        s =""
+
 
 
 class UiThread(th.Thread):
@@ -99,11 +114,15 @@ class ProzessFrame(tk.Frame):
     def __init__(self,parent, prozess) -> None:
         tk.Frame.__init__(self,parent)
         self.prozess : datatypes.prozess = prozess
+        self.initStructure()
+    def initStructure(self):
+        """ Add structure and fill widgets """
         self.name = tk.Label(self,text=self.prozess.name, width=15, anchor=tk.W)
         self.status = tk.Label(self, width=8)
         self.timer = tk.Label(self, width=15, anchor=tk.E)
-        zahl = self.prozess.totalTime.total_seconds()/60/60
-        self.timer.config(text=f'{zahl:.2f}') # set Text to hours of the timedelta
+        #sec = self.prozess.totalTime.total_seconds()
+        # TODO Fix format of output
+        self.timer.config(text=str(self.prozess.totalTime)) # set Text to hours of the timedelta
 
         if self.prozess.running == True:
             self.status.config(bg='#008800', text="Active")
@@ -116,12 +135,22 @@ class ProzessFrame(tk.Frame):
         self.timer.pack(fill=tk.Y,side='right')
     def update(self):
         """should update the Prozess in the UI"""
-        zahl = self.prozess.totalTime.total_seconds()/60/60
-        self.timer.config(text=f'{zahl:.2f}') # set Text to hours of the timedelta
+        # TODO Fix format of output
+        #sec = self.prozess.totalTime.total_seconds()/60/60
+        self.timer.config(text=str(self.prozess.totalTime)) # set Text to hours of the timedelta
         if self.prozess.running == True:
             self.status.config(bg='#008800', text="Active")
         else:
             self.status.config(bg='#990000', text="Inactive")
+
+class ProzessGroupFrame( ProzessFrame):
+    """Frame to display processgroups"""
+
+    def __init__(self,parent, prozessGroup) -> None:
+        tk.Frame.__init__(self,parent)
+        self.prozess : datatypes.prozessGroup = prozessGroup
+        self.initStructure()
+    
     
 class ProzessFrameHeader(tk.Frame):
     def __init__(self,parent) -> None:
