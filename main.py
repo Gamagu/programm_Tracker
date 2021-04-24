@@ -11,7 +11,7 @@ if __name__ == '__main__':
     tracker.readProcessGroups()
     uiThread = UiThread(args=[tracker.processesToTrack, tracker.processGroups])
     uiThread.start()    
-    tracker.updateProcessesToTrack()
+    tracker.update()
     uiThread.ui.reload()
     while uiThread.is_alive():
         for i in range(10):
@@ -19,7 +19,7 @@ if __name__ == '__main__':
                 break
             time.sleep(tracker.delay)
             try:
-                tracker.updateProcessesToTrack()
+                tracker.update()
                 uiThread.ui.reload()
             except Exception as e:
                 print("Error: ", e)

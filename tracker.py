@@ -13,27 +13,38 @@ class Tracker:
         self.t1 = datetime.datetime.now()
 
     def getRunningProcesses(self):
-        
         tasks = self.conn.Win32_Process()
-        t1 = datetime.datetime.now()
         self.processesNow = datatypes.processList() #Empty the list
         for task in tasks:
             self.processesNow.append(datatypes.prozess(parent = task))
-        print("readout time: ",(datetime.datetime.now() - t1))
+
     def updateProcessesToTrack(self):
-        self.getRunningProcesses()
-        deltaT = datetime.datetime.now()-self.t1 #Timedifference between last Processreadout and now
+        # TODO Change time messurement for both groups and processes
+        self.deltaT = datetime.datetime.now()-self.t1 #Timedifference between last Processreadout and now
         self.t1 = datetime.datetime.now()
-        print("timedelta: ", deltaT)
+        print("timedelta: ", self.deltaT)
         for i in range(len(self.processesToTrack.prozessNames)):
             if self.processesToTrack.prozessNames[i] in self.processesNow.prozessNames:
                 self.processesToTrack[i].running = True #Update state
                 #self.processesToTrack[i].currentRuntime += deltaT #Update runtime
-                self.processesToTrack[i].addTimedelta(deltaT)
+                self.processesToTrack[i].addTimedelta(self.deltaT)
                 print(f'Programm: {self.processesToTrack[i].name} Runtime: {self.processesToTrack[i].currentRuntime}')
             else:
                 self.processesToTrack[i].running = False
+    
+    def updateGroupsToTrack(self):
+        for i in range(len(self.processGroups)):
+            self.processGroups[i].running =  self.processGroups[i].checkRunning()
+            if self.processGroups[i].running == True:
+                self.processGroups[i].addTimedelta(self.deltaT)
+                print(f'Group: {self.processGroups[i].name} Runtime: {self.processGroups[i].currentRuntime}')
 
+    def update(self):
+        self.deltaT = datetime.datetime.now()-self.t1 #Timedifference between last Processreadout and now
+        self.t1 = datetime.datetime.now()
+        self.getRunningProcesses()
+        self.updateProcessesToTrack()
+        self.updateGroupsToTrack()
     def test(self):
         for i in self.processes.prozessNames:
             print(i)
@@ -50,7 +61,7 @@ class Tracker:
         
         for i in jsonFile["processes"]: #Für jeden prozess
             self.processesToTrack.append(datatypes.prozess( name=i["name"],
-                                                            totalTime= i["totalTime"]))    
+                                                            pastTime= i["totalTime"]))    
                                     
     def readProcessGroups(self):
         jsonFile : dict
@@ -58,36 +69,32 @@ class Tracker:
             jsonFile = json.load(file)
         
         for group in range(len(jsonFile["groups"])): #Für jede gruppe   
-            self.processGroups.append(datatypes.prozessGroupList(jsonFile["groups"][group]["name"])) # Create a grouplist and save it
+            self.processGroups.append(datatypes.prozessGroup(name=jsonFile["groups"][group]["name"],pastTime = jsonFile["groups"][group]["totalTime"])) # Create a grouplist and save it
             for prozess in jsonFile["groups"][group]["programms"]: #For every programm, only programms in prozesses to track are able for tracking
                 if prozess["name"] in self.processesToTrack.prozessNames: #if its already tracking
                     self.processGroups[group].append(self.processesToTrack[self.processesToTrack.prozessNames.index(prozess["name"])])
 
+    def writeProcessGroups(self):
+        pass
     def writeProcessToTrack(self):
         #Apply the prozess.currentRuntime to prozess.totalRuntime and reset currentRuntime
         for i in self.processesToTrack:
             i.totalTime += i.currentRuntime
             i.currentRuntime = datetime.timedelta(seconds=0)            
-            print("yikes: ", i.totalTime)
-        #get data from the existing file
-        jsonFile : dict
-        with open("processes.json", "r") as file:
-            jsonFile = json.load(file)
 
-        #Manipulate Json with new data
-        newData = []
+        newData ={
+                    "processes": []         
+                }
+
         for i in range(len(self.processesToTrack)):
-            
-            newData.append({
+            newData["processes"].append({
                 "name" : self.processesToTrack.prozessNames[i],
                 "totalTime" : self.processesToTrack[i].totalTime.seconds
             })
         
-        jsonFile["processes"] = newData 
-
         #save
         with open("processes.json", "w") as file:
-            json.dump(jsonFile, file, indent=4 ,sort_keys = True)
+            json.dump(newData, file, indent=4 ,sort_keys = True)
    
 
 if __name__ == "__main__":
