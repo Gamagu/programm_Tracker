@@ -12,20 +12,19 @@ class prozess:
     pastTime : datetime.timedelta
     totalTime : datetime.timedelta
 
-    def __init__(self, parent : wmi._wmi_object = None, running = False, id = -1, name : str = None, totalTime : int = 0  ) -> None:
+    def __init__(self, parent : wmi._wmi_object = None, running = False, id = -1, name : str = None, pastTime : int = 0  ) -> None:
         if parent is not None:
             #if a wmi objekt is given
             self.id = parent.ProcessId
             self.name = parent.name
             self.running = running
-            
-            self.pastTime = datetime.timedelta(seconds=totalTime)
+            self.pastTime = datetime.timedelta(seconds=pastTime)
         else:
             #if its self created
             self.id = id
             self.name = name
             self.running = running
-            self.pastTime = datetime.timedelta(seconds=totalTime)
+            self.pastTime = datetime.timedelta(seconds=pastTime)
 
         self.currentRuntime = datetime.timedelta(seconds=0)
         self.totalTime = self.currentRuntime + self.pastTime
@@ -51,10 +50,14 @@ class processList(UserList):
         return True
 
         
-class prozessGroupList(processList):
+class prozessGroup(processList,prozess):
     """List for Processes in for of a group."""
 
-    def __init__(self, name) -> None:
-        super().__init__()
+    def __init__(self, name = None,running = False, pastTime : int = 0 ) -> None:
+        processList.__init__(self)
         self.name = name
+        self.running : bool = running 
+        self.pastTime = datetime.timedelta(seconds=pastTime)
+        self.currentRuntime = datetime.timedelta(seconds=0)
+        self.totalTime = self.currentRuntime + self.pastTime
         
