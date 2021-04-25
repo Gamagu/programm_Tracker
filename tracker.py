@@ -58,7 +58,8 @@ class Tracker:
         
         for i in jsonFile["processes"]: #Für jeden prozess
             self.processesToTrack.append(datatypes.prozess( name=i["name"],
-                                                            pastTime= i["totalTime"]))    
+                                                            pastTime= i["totalTime"],
+                                                            displayName=i["displayName"]))    
                                     
     def readProcessGroups(self):
         jsonFile : dict
@@ -66,7 +67,8 @@ class Tracker:
             jsonFile = json.load(file)
         
         for group in range(len(jsonFile["groups"])): #Für jede gruppe   
-            self.processGroups.append(datatypes.prozessGroup(name=jsonFile["groups"][group]["name"],pastTime = jsonFile["groups"][group]["totalTime"])) # Create a grouplist and save it
+            self.processGroups.append(datatypes.prozessGroup(name=jsonFile["groups"][group]["name"],pastTime = jsonFile["groups"][group]["totalTime"],
+                                                            displayName=jsonFile["groups"][group]["displayName"])) # Create a grouplist and save it
             for prozess in jsonFile["groups"][group]["programms"]: #For every programm, only programms in prozesses to track are able for tracking
                 if prozess["name"] in self.processesToTrack.prozessNames: #if its already tracking
                     self.processGroups[group].append(self.processesToTrack[self.processesToTrack.prozessNames.index(prozess["name"])])

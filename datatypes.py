@@ -11,14 +11,17 @@ class prozess:
     currentRuntime : datetime.timedelta #Runtime since last save
     pastTime : datetime.timedelta
     totalTime : datetime.timedelta
+    path : str
+    displayName : str
 
-    def __init__(self, parent : wmi._wmi_object = None, running = False, id = -1, name : str = None, pastTime : int = 0  ) -> None:
+    def __init__(self, parent : wmi._wmi_object = None, running = False, id = -1, name : str = None, pastTime : int = 0, path : str = "", displayName : str = ""  ) -> None:
         if parent is not None:
             #if a wmi objekt is given
             self.id = parent.ProcessId
             self.name = parent.name
             self.running = running
-            self.pastTime = datetime.timedelta(seconds=pastTime)
+            
+            
         else:
             #if its self created
             self.id = id
@@ -26,8 +29,12 @@ class prozess:
             self.running = running
             self.pastTime = datetime.timedelta(seconds=pastTime)
 
+        self.displayName = displayName
+        self.path = path
+        self.pastTime = datetime.timedelta(seconds=pastTime)
         self.currentRuntime = datetime.timedelta(seconds=0)
         self.totalTime = self.currentRuntime + self.pastTime
+        
 
     def addTimedelta(self, diff : datetime.timedelta):
         self.currentRuntime += diff
@@ -41,6 +48,12 @@ class prozess:
         print("total: ", self.totalTime)
         self.totalTime += self.currentRuntime
         self.currentRuntime = datetime.timedelta(seconds=0) 
+    
+    def getDisplayName(self):
+        if self.displayName == "":
+            return self.name
+        else:
+            return self.displayName
 
 class processList(UserList):
     """List only for processes"""
@@ -62,9 +75,10 @@ class processList(UserList):
 class prozessGroup(processList,prozess):
     """List for Processes in for of a group."""
 
-    def __init__(self, name = None,running = False, pastTime : int = 0 ) -> None:
+    def __init__(self, name = None,running = False, pastTime : int = 0, displayName : str = "" ) -> None:
         processList.__init__(self)
         self.name = name
+        self.displayName = displayName
         self.running : bool = running 
         self.pastTime = datetime.timedelta(seconds=pastTime)
         self.currentRuntime = datetime.timedelta(seconds=0)
