@@ -2,19 +2,27 @@
     "processes": [
         {
             "name": "Spotify.exe",
-            "totalTime": 622
+            "totalTime": 3087,
+            "displayName" : "Spotify",
+            "path" : ""
         },
         {
             "name": "firefox.exe",
-            "totalTime": 775
+            "totalTime": 3496,
+            "displayName" : "Discord",
+            "path" : ""
         },
         {
             "name": "Discord.exe",
-            "totalTime": 558
+            "totalTime": 3179,
+            "displayName" : "Discord",
+            "path" : ""
         },
         {
             "name": "RiotClientServices.exe",
-            "totalTime": 0
+            "totalTime": 39,
+            "displayName" : "Rito Client",
+            "path" : ""
         }
     ]
 }

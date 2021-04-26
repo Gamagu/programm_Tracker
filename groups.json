@@ -1,15 +1,15 @@
 {
-    "groups":[
+    "groups": [
         {
             "name": "Test",
-            "programms" : [
+            "programms": [
                 {
-                    "name" : "Spotify.exe"
-                },
-                {
-                    "name" : "Siscord.exe"
+                    "name": "Spotify.exe"
                 }
-            ]
+            ],
+            "totalTime": 1975,
+            "displayName" : "TestLol",
+            "path" : ""
         }
     ]
 }
