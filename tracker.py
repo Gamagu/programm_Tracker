@@ -5,7 +5,6 @@ from collections import UserList
 class Tracker:
     def __init__(self):
         self.processesNow = datatypes.processList() #for new processes
-        self.processesLast = datatypes.processList() #for last timestamp. to check if sth stopped
         self.processGroups = [] #groups to check
         self.processesToTrack = datatypes.processList() #processes to check
         self.conn = wmi.WMI() #wrapper to win api?
@@ -13,13 +12,12 @@ class Tracker:
         self.t1 = datetime.datetime.now()
 
     def getRunningProcesses(self):
-        tasks = self.conn.Win32_Process()
+        processes = self.conn.Win32_Process() #Retrieve all processes
         self.processesNow = datatypes.processList() #Empty the list
-        for task in tasks:
-            self.processesNow.append(datatypes.prozess(parent = task))
+        for process in processes:
+            self.processesNow.append(datatypes.prozess(parent = process))
 
     def updateProcessesToTrack(self):
-        print("timedelta: ", self.deltaT)
         for i in range(len(self.processesToTrack.prozessNames)):
             if self.processesToTrack.prozessNames[i] in self.processesNow.prozessNames:
                 self.processesToTrack[i].running = True #Update state
@@ -37,14 +35,13 @@ class Tracker:
                 print(f'Group: {self.processGroups[i].name} Runtime: {self.processGroups[i].currentRuntime}')
 
     def update(self):
-        self.deltaT = datetime.datetime.now()-self.t1 #Timedifference between last Processreadout and now
+        #Timedifference between last Processreadout and now
+        self.deltaT = datetime.datetime.now()-self.t1 
         self.t1 = datetime.datetime.now()
+
         self.getRunningProcesses()
         self.updateProcessesToTrack()
         self.updateGroupsToTrack()
-    def test(self):
-        for i in self.processes.prozessNames:
-            print(i)
 
     def checkProcess(self, name : str):
         if name in self.processes.prozessNames:
@@ -52,6 +49,7 @@ class Tracker:
         return False
 
     def readProcessToTrack(self):
+        
         jsonFile : dict
         with open("processes.json", "r") as file:
             jsonFile = json.load(file)
@@ -59,7 +57,8 @@ class Tracker:
         for i in jsonFile["processes"]: #Für jeden prozess
             self.processesToTrack.append(datatypes.prozess( name=i["name"],
                                                             pastTime= i["totalTime"],
-                                                            displayName=i["displayName"]))    
+                                                            displayName=i["displayName"],
+                                                            path=i["path"]))    
                                     
     def readProcessGroups(self):
         jsonFile : dict
@@ -68,7 +67,9 @@ class Tracker:
         
         for group in range(len(jsonFile["groups"])): #Für jede gruppe   
             self.processGroups.append(datatypes.prozessGroup(name=jsonFile["groups"][group]["name"],pastTime = jsonFile["groups"][group]["totalTime"],
-                                                            displayName=jsonFile["groups"][group]["displayName"])) # Create a grouplist and save it
+                                                            displayName=jsonFile["groups"][group]["displayName"],
+                                                            path=jsonFile["groups"][group]["path"])) # Create a grouplist and save it
+
             for prozess in jsonFile["groups"][group]["programms"]: #For every programm, only programms in prozesses to track are able for tracking
                 if prozess["name"] in self.processesToTrack.prozessNames: #if its already tracking
                     self.processGroups[group].append(self.processesToTrack[self.processesToTrack.prozessNames.index(prozess["name"])])
@@ -84,7 +85,9 @@ class Tracker:
             print("name:{i.name} totalTime:{i.totalTime}")
             jsonFile["groups"].append({"name": i.name,
                                         "totalTime": i.totalTime.seconds,
-                                        "programms":programms
+                                        "programms":programms,
+                                        "displayName" : i.displayName,
+                                        "path" : i.path
                                         })
         
         #save
@@ -103,7 +106,9 @@ class Tracker:
         for i in range(len(self.processesToTrack)):
             newData["processes"].append({
                 "name" : self.processesToTrack.prozessNames[i],
-                "totalTime" : self.processesToTrack[i].totalTime.seconds
+                "totalTime" : self.processesToTrack[i].totalTime.seconds,
+                "displayName"  : self.processesToTrack[i].displayName,
+                "path" : self.processesToTrack[i].path
             })
         
         #save

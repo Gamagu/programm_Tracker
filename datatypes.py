@@ -4,7 +4,9 @@ from collections import UserList
 
 @dataclass
 class prozess:
+
     """Process information"""
+
     id : int
     name : str
     running : bool
@@ -27,7 +29,6 @@ class prozess:
             self.id = id
             self.name = name
             self.running = running
-            self.pastTime = datetime.timedelta(seconds=pastTime)
 
         self.displayName = displayName
         self.path = path
@@ -37,19 +38,17 @@ class prozess:
         
 
     def addTimedelta(self, diff : datetime.timedelta):
+        """adds diff: timedelta to currentruntime and updates totalTime"""
         self.currentRuntime += diff
         self.totalTime = self.currentRuntime + self.pastTime
     
     def applyCurrentRuntime(self):
-        # apply the processGroup.currentRuntime to processGroup.totalRuntime
-        # and reset currentRuntime
-        print(self.name, "------")
-        print("current: ", self.currentRuntime)
-        print("total: ", self.totalTime)
+        """apply the processGroup.currentRuntime to processGroup.totalRuntime and reset currentRuntime """
         self.totalTime += self.currentRuntime
         self.currentRuntime = datetime.timedelta(seconds=0) 
     
     def getDisplayName(self):
+        
         if self.displayName == "":
             return self.name
         else:
@@ -73,10 +72,11 @@ class processList(UserList):
 
         
 class prozessGroup(processList,prozess):
-    """List for Processes in for of a group."""
+    """List for Processes in form of a group."""
 
-    def __init__(self, name = None,running = False, pastTime : int = 0, displayName : str = "" ) -> None:
+    def __init__(self, name = None,running = False, pastTime : int = 0, displayName : str = "",path : str = "" ) -> None:
         processList.__init__(self)
+        self.path = path
         self.name = name
         self.displayName = displayName
         self.running : bool = running 
