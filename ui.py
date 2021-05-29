@@ -28,6 +28,7 @@ class Ui(tk.Tk):
         self.prozessTop = ProzessFrameHeader(self.processFrame)
         self.prozessTop.pack(side=tk.TOP,fill=tk.BOTH)
         self.processFrame.grid(row=0, column=0, sticky="nsew") 
+        
         self.initProcesses()
         #Init Groupe
         self.useGroups = False
@@ -131,7 +132,7 @@ class ProzessFrame(tk.Frame):
         self.timer = tk.Label(self, width=15, anchor=tk.E)
         self.settingBt = SettingsButton(self,self.prozess)
         #sec = self.prozess.totalTime.total_seconds()
-        # TODO Fix format of output
+
         self.timer.config(text=str(self.prozess.totalTime)) # set Text to hours of the timedelta
 
         if self.prozess.running == True:
@@ -145,7 +146,6 @@ class ProzessFrame(tk.Frame):
         self.status.pack(fill=tk.Y, side='right')
         self.timer.pack(fill=tk.Y,side='right')
         
-
     def update(self):
         """should update the Prozess in the UI"""
         # TODO Fix format of output
@@ -187,37 +187,47 @@ class SettingsButton(tk.Button):
         test = ProcessSettingsToplevel(self.parent, self.process)
 
 class ProcessSettingsToplevel(tk.Toplevel):
+    labelDirection = tk.E
 
     def __init__(self, master,process):
         tk.Toplevel.__init__(self, master)
-        self.process = process
+        self.process : datatypes.prozess = process
         self.initLayout()
         self.read()
 
     def initLayout(self):
 
         self.btSave = tk.Button(self, command=self.save, text="Save")
-        self.labelName = tk.Label(self, text="Name: ")
-        self.labelPath = tk.Label(self, text="Exe. Path: ")
+
+        self.labelName = tk.Label(self, text="Name:")
+        self.labelPath = tk.Label(self, text="Exe. Path:")
         self.inputName = tk.Entry(self)
         self.inputPath = tk.Entry(self)
 
-        self.labelName.grid(column=0, row=0)
+        self.labelDisplayName = tk.Label(self, text = "Displayname:")
+        self.inputDisplayName = tk.Entry(self)
+
+        self.labelName.grid(column=0, row=0, sticky=ProcessSettingsToplevel.labelDirection)
         self.inputName.grid(column=1, row=0)
 
-        self.labelPath.grid(column=0, row=1)
+        self.labelPath.grid(column=0, row=1,sticky=ProcessSettingsToplevel.labelDirection)
         self.inputPath.grid(column=1, row=1)
 
-        self.btSave.grid(column=0, row=2)
+        self.labelDisplayName.grid(column=0,row=2,sticky=ProcessSettingsToplevel.labelDirection)
+        self.inputDisplayName.grid(column=1,row=2)
+
+        self.btSave.grid(column=0, row=3, columnspan=2)
 
     def save(self):
-        print(self.inputName.get())
-        
+        self.process.name = self.inputName.get()
+        self.process.path = self.inputPath.get()
+        self.process.displayName = self.inputDisplayName.get()
         self.destroy()
-
+        
     def read(self):
         self.inputName.insert(0,self.process.name)
         self.inputPath.insert(0,self.process.path)
+        self.inputDisplayName.insert(0,self.process.displayName)
 
 if __name__ == '__main__':
     test = Ui()
