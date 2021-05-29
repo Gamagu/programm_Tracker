@@ -18,13 +18,13 @@
 -[] Open programmgroups for tasks
     bsp: Open spotify, chrome and vs for coding
 
-## Track Times
+### Track Times
 
-For tracking we create the *process* and *processlist*. We access the wmi Api to get a list from every running Process and compaire them with a list of the programms what we should track. For every programm what we want to track we add the timedifference between messurements.
+For tracking we . We access the wmi Api to get a list from every running Process and compaire them with a list of the programms what we should track. For every programm what we want to track we add the timedifference between messurements.
 
 
-
-### Process
+# Classes
+## Process
 #### Attributes
 *   id : int  
 *    name : str     	                    
@@ -52,7 +52,7 @@ For tracking we create the *process* and *processlist*. We access the wmi Api to
 * getDisplayName() : str
 >Returns *displayname*, if its "" or None this returns *name*.
 
-### ProcessList
+## ProcessList
 >ProcessList inherit from *collections.UserList* and is just a wrapper for a list of processes and a list of names : str.
 
 #### Attributes
@@ -66,8 +66,43 @@ For tracking we create the *process* and *processlist*. We access the wmi Api to
 *   checkRunning() : bool
 > Returns *true* if for every *item* *item.running* equals *true*
 
-### processGroup
+## processGroup
 >ProcessGroup inherbits from *process* and *processList*
+
+## Tracker
+
+#### Attributes
+*   processesNow : processList 
+*   processGroups : list
+*   processesToTrack : processList
+*   conn : wmi.WMI 
+> Connection for the Windows api
+*   delay : int
+*   t1 : datetime.datetime 
+> Timestamp 1 for messurement
+*   deltaT : datetime.timedelta
+> Timedelta between two timestamps
+
+#### Methods
+*   getRunningProcesses() : void
+> Retrieves a list of processes from *conn* and puts them into *processesNow*
+*   updateProcessesToTrack() : void
+>Checks for every process in *processesToTrack* if it appears in *processesNow* and updates *process.running* whether it is running or not. If its *process.addTimedelta(deltaT)* gets called.
+*   updateGroupsToTrack () : void
+>Every processGroup in *processGroups* gets updated whether its running or not and if its running *processGroup.addTimedelta(deltaT)* gets called.
+*   update() : void
+> calculates *deltaT* as the difference between "now" and *t1*. Calls *getRunningProcesses* and updates Processes and ProcessGroups.
+*   checkProcess(name : str) : bool
+>Returns True if name is in *processes.processNow*
+*   readProcessToTrack() : void
+> Reads information from "processes.json" and stores them in *processesToTrack* as Processes.
+*   readProcessGroups() : void
+>  Reads information from "groups.json" and stores it as *processGroup* in *processGroups*.
+*   writeProcessGroups() : void
+> For ever *processGroup* in *processGroups* applyCurrentRuntime gets called and all information from those processGroups gets written to "groups.json"
+*   writeProcessToTrack() : void
+>Calls applyCurrentRuntime for every process in *processesToTrack* and writes "name", "totalTime", "displayTime" and "path" as a Json list to "processes.json".
+
 
 
 
