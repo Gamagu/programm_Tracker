@@ -1,6 +1,6 @@
 # Programm Tracker
 
->This tracker should track programm's runntime and store them somewhere. This will be extended by a "programm group" system where a user can define a few programms as a group which gets tracked.
+>This tracker should track programm's runtime and store them somewhere. This will be extended by a "programm group" system where a user can define a few programms as a group which gets tracked.
  
 
 ### Planned Features
