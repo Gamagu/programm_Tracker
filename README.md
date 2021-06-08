@@ -1,13 +1,13 @@
-# Programm Tracker
+# Program Tracker
 
->This tracker should track programm's runtime and store them somewhere. This will be extended by a "programm group" system where a user can define a few programms as a group which gets tracked.
+>This tracker should track program's runtime and store them somewhere. This will be extended by a "program group" system where a user can define a few programs as a group which gets tracked.
  
 
 ### Planned Features
 
--[x]  Track time from programms 
+-[x]  Track time from programs 
 
--[x] track time in these programmgoups(automatically) 
+-[x] track time in these programgoups(automatically) 
 
 -[x] store time localy
 
@@ -17,7 +17,7 @@
 
 -[] should run in backround and ui can be opened via the task bar
 
--[] Open programmgroups for tasks
+-[] Open programgroups for tasks
     bsp: Open spotify, chrome and vs for coding
 
 ### Track Times
