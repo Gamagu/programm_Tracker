@@ -20,7 +20,7 @@
 
 ### Track Times
 
-For tracking we . We access the wmi Api to get a list from every running Process and compaire them with a list of the programms what we should track. For every programm what we want to track we add the timedifference between messurements.
+For tracking we . We access the wmi Api to get a list from every running Process and compaire them with a list of the programms what we should track. For every programm what we want to track we add the timedifference between checks.
 
 
 # Classes
