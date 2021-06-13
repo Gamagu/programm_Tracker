@@ -65,7 +65,7 @@ groups.json
 
 ```
 
-Than run main.py and just wait... if the ui gets closed the programm will exit.
+Then run main.py and just wait... if the UI gets closed the program will exit.
 
 
 
