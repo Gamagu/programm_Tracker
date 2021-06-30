@@ -82,7 +82,7 @@ class Tracker:
                     self.processGroups[group].append(self.processesToTrack[self.processesToTrack.prozessNames.index(prozess["name"])])
 
     def writeProcessGroups(self):
-        """For ever processGroup in processGroups applyCurrentRuntime gets called and all information from those processGroups gets written to "groups.json""""
+        """For ever processGroup in processGroups applyCurrentRuntime gets called and all information from those processGroups gets written to "groups.json"""
         jsonFile : dict = {"groups":[]}
         # apply the processGroup.currentRuntime to processGroup.totalRuntime and reset currentRuntime
         for i in self.processGroups:
