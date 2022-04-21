@@ -1,30 +1,30 @@
-# Programm Tracker
+# Program Tracker
 
->This tracker should track programm's runntime and store them somewhere. This will be extended by a "programm group" system where a user can define a few programms as a group which gets tracked.
+>This tracker should track program's runtime and store them somewhere. This will be extended by a "program group" system where a user can define a few programs as a group which gets tracked.
  
 
 ### Planned Features
 
--[x]  Track time from programms 
+-[x] Track time from programs 
 
--[x] track time in these programmgoups(automatically) 
+-[x] Track time in these programgroups(automatically) 
 
--[x] store time localy
+-[x] Store time local
 
--[x] Normal Ui
+-[x] Normal UI
 
--[] store time in cloud
+-[] Store time in cloud
 
--[] should run in backround and ui can be opened via the task bar
+-[] Should run in backround and UI can be opened via the task bar
 
--[] Open programmgroups for tasks
-    bsp: Open spotify, chrome and vs for coding
+-[] Open programgroups for tasks
+    E.g.: Open Spotify, Chrome and VS for coding
 
 ### Track Times
-For Track times, we initiate a tracker object and read the processgroups and processes to track as  the init. After that, we know what processes we're looking for and we can call ``update()`` periodically, with the delay ``tracker.delay``, what adds the messured timespan to the given time from the file. Every 10th run the information to a file.
+For Track times, we initiate a tracker object and read the processgroups and processes to track as  the init. After that, we know what processes we're looking for and we can call ``update()`` periodically, with the delay ``tracker.delay``, adding the measured timespan to the given time from the file. Every 10th run the information to a file.
 
-### Ui
-The Ui gets started in a second thread for a better user Experience and waits for a "reload" event. This gets called from the first thread after every update from the tracker. Until now the tracker thead depends on the Ui thread, so both start at the same time and if the Ui gets closed the first thread will also stop. The last save takes place when the Ui is closed.
+### UI
+The UI gets started in a second thread for a better user Experience and waits for a "reload" event. This gets called from the first thread after every update from the tracker. Until now the tracker thead depends on the UI thread, so both start at the same time and if the UI gets closed the first thread will also stop. The last save takes place when the UI is closed.
 
 ### Usage
 Edit the Files groups.json and processes.json with the structures: 
@@ -65,7 +65,7 @@ groups.json
 
 ```
 
-Than run main.py and just wait... if the ui gets closed the programm will exit.
+Then run main.py and just wait... if the UI gets closed the program will exit.
 
 
 

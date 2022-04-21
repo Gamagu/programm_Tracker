@@ -12,12 +12,15 @@ class Tracker:
         self.t1 = datetime.datetime.now()
 
     def getRunningProcesses(self):
+        """Retrieves a list of processes from conn and puts them into processesNow"""
         processes = self.conn.Win32_Process() #Retrieve all processes
         self.processesNow = datatypes.processList() #Empty the list
         for process in processes:
             self.processesNow.append(datatypes.prozess(parent = process))
 
     def updateProcessesToTrack(self):
+        """Checks for every process in processesToTrack if it appears in processesNow and updates process.running whether it is running or not.
+         If its process.addTimedelta(deltaT) gets called."""
         for i in range(len(self.processesToTrack.prozessNames)):
             if self.processesToTrack.prozessNames[i] in self.processesNow.prozessNames:
                 self.processesToTrack[i].running = True #Update state
@@ -27,6 +30,7 @@ class Tracker:
                 self.processesToTrack[i].running = False
     
     def updateGroupsToTrack(self):
+        """Every processGroup in processGroups gets updated whether its running or not and if its running processGroup.addTimedelta(deltaT) gets called."""
         for i in range(len(self.processGroups)):
             self.processGroups[i].running =  self.processGroups[i].checkRunning()
             if self.processGroups[i].running == True:
@@ -34,6 +38,7 @@ class Tracker:
                 print(f'Group: {self.processGroups[i].name} Runtime: {self.processGroups[i].currentRuntime}')
 
     def update(self):
+        """calculates deltaT as the difference between "now" and t1. Calls getRunningProcesses and updates Processes and ProcessGroups."""
         #Timedifference between last Processreadout and now
         self.deltaT = datetime.datetime.now()-self.t1 
         self.t1 = datetime.datetime.now()
@@ -43,12 +48,13 @@ class Tracker:
         self.updateGroupsToTrack()
 
     def checkProcess(self, name : str):
+        """Returns True if name is in processes.processNow"""
         if name in self.processes.prozessNames:
             return True
         return False
 
     def readProcessToTrack(self):
-        
+        """Reads information from "processes.json" and stores them in processesToTrack as Processes."""
         jsonFile : dict
         with open("processes.json", "r") as file:
             jsonFile = json.load(file)
@@ -60,6 +66,7 @@ class Tracker:
                                                             path=i["path"]))    
                                     
     def readProcessGroups(self):
+        """Reads information from "groups.json" and stores it as processGroup in processGroups."""
         jsonFile : dict
         with open("groups.json", "r") as file:
             jsonFile = json.load(file)
@@ -74,6 +81,7 @@ class Tracker:
                     self.processGroups[group].append(self.processesToTrack[self.processesToTrack.prozessNames.index(prozess["name"])])
 
     def writeProcessGroups(self):
+        """For ever processGroup in processGroups applyCurrentRuntime gets called and all information from those processGroups gets written to "groups.json"""
         jsonFile : dict = {"groups":[]}
         # apply the processGroup.currentRuntime to processGroup.totalRuntime and reset currentRuntime
         for i in self.processGroups:
@@ -94,6 +102,7 @@ class Tracker:
             json.dump(jsonFile, file, indent=4 ,sort_keys = True)
         
     def writeProcessToTrack(self):
+        """Calls applyCurrentRuntime for every process in processesToTrack and writes "name", "totalTime", "displayTime" and "path" as a Json list to "processes.json"."""
         #Apply the prozess.currentRuntime to prozess.totalRuntime and reset currentRuntime
         for i in self.processesToTrack:
             i.applyCurrentRuntime()            

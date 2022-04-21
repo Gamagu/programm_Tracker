@@ -10,11 +10,11 @@ class prozess:
     id : int
     name : str
     running : bool
-    currentRuntime : datetime.timedelta #Runtime since last save
-    pastTime : datetime.timedelta
+    currentRuntime : datetime.timedelta     #Runtime since last save
+    pastTime : datetime.timedelta   #Time read from a file/or before the last save
     totalTime : datetime.timedelta
-    path : str
-    displayName : str
+    path : str  #Path for executing
+    displayName : str   # Name what should be displayed
 
     def __init__(self, parent : wmi._wmi_object = None, running = False, id = -1, name : str = None, pastTime : int = 0, path : str = "", displayName : str = ""  ) -> None:
         if parent is not None:
@@ -48,7 +48,7 @@ class prozess:
         self.currentRuntime = datetime.timedelta(seconds=0) 
     
     def getDisplayName(self):
-        
+        """Returns displayname, if its "" or None this returns name."""
         if self.displayName == "":
             return self.name
         else:
